@@ -1,25 +1,28 @@
 import { useState } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 import type { LoginCredentials } from '../types';
 
 const LoginPage = () => {
+  const { login } = useAuth();
   const [credentials, setCredentials] = useState<LoginCredentials>({
     email: '',
     password: ''
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setError('');
     
-    // TODO: Implement actual login logic
-    console.log('Login attempt:', credentials);
-    
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      await login(credentials.email, credentials.password);
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Login failed');
+    } finally {
       setIsLoading(false);
-      // TODO: Handle login response
-    }, 1000);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,6 +47,12 @@ const LoginPage = () => {
             </p>
           </div>
 
+          {error && (
+            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+              {error}
+            </div>
+          )}
+          
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">

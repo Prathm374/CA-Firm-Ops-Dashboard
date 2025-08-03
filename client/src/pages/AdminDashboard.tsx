@@ -1,14 +1,16 @@
 import { useState } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 import type { User } from '../types';
 
 const AdminDashboard = () => {
-  const [currentUser] = useState<User>({
+  const { user, logout } = useAuth();
+  const currentUser = user || {
     id: '1',
     name: 'John Doe',
     email: 'john.doe@cafirm.com',
-    role: 'admin',
+    role: 'admin' as const,
     avatar: 'https://via.placeholder.com/40'
-  });
+  };
 
   const [activeTab, setActiveTab] = useState('dashboard');
 
@@ -47,6 +49,12 @@ const AdminDashboard = () => {
                   <span className="ml-2 text-gray-700">{currentUser.name}</span>
                 </button>
               </div>
+              <button
+                onClick={logout}
+                className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium"
+              >
+                Logout
+              </button>
             </div>
           </div>
         </div>

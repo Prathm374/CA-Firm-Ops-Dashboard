@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
+import authRoutes from './routes/auth.route';
 
 // Load environment variables
 dotenv.config();
@@ -15,7 +16,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Database connection
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/ca-firm-dashboard';
+const MONGODB_URI = process.env.MONGODB_URI || "mongodb+srv://prathmeshgahukar001:ctKAvlJstkUJeFEv@cluster0.uv1notd.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
 mongoose.connect(MONGODB_URI)
   .then(() => {
@@ -34,6 +35,9 @@ app.get('/api/health', (req, res) => {
     environment: process.env.NODE_ENV || 'development'
   });
 });
+
+// Auth routes
+app.use('/api/auth', authRoutes);
 
 // API Routes (to be implemented)
 app.use('/api/users', (req, res) => {
