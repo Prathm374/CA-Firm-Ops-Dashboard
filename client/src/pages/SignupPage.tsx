@@ -2,37 +2,45 @@ import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import type { LoginCredentials } from '../types';
 
-const LoginPage = () => {
-  const { login } = useAuth();
-  const [credentials, setCredentials] = useState<LoginCredentials>({
+interface SignupCredentials extends LoginCredentials {
+  name: string;
+  role: 'admin' | 'manager' | 'staff';
+}
+
+const SignupPage = () => {
+  const { register } = useAuth();
+  const [credentials, setCredentials] = useState<SignupCredentials>({
+    name: '',
     email: '',
-    password: ''
+    password: '',
+    role: 'staff'
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
+    setSuccess('');
     
     try {
-      await login(credentials.email, credentials.password);
+      await register(credentials.name, credentials.email, credentials.password, credentials.role);
+      setSuccess('Registration successful! You are now logged in.');
     } catch (error) {
-      setError(error instanceof Error ? error.message : 'Login failed');
+      setError(error instanceof Error ? error.message : 'Registration failed');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setCredentials({
       ...credentials,
       [e.target.name]: e.target.value
     });
   };
-
-  console.log('LoginPage rendering');
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
@@ -43,7 +51,7 @@ const LoginPage = () => {
               CA Firm Dashboard
             </h1>
             <p className="text-gray-600">
-              Sign in to your account
+              Create your account
             </p>
           </div>
 
@@ -52,8 +60,30 @@ const LoginPage = () => {
               {error}
             </div>
           )}
+
+          {success && (
+            <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded">
+              {success}
+            </div>
+          )}
           
           <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                Full Name
+              </label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value={credentials.name}
+                onChange={handleChange}
+                required
+                className="input-field"
+                placeholder="Enter your full name"
+              />
+            </div>
+
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                 Email Address
@@ -81,29 +111,28 @@ const LoginPage = () => {
                 value={credentials.password}
                 onChange={handleChange}
                 required
+                minLength={6}
                 className="input-field"
                 placeholder="Enter your password"
               />
             </div>
 
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <input
-                  id="remember-me"
-                  name="remember-me"
-                  type="checkbox"
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
-                  Remember me
-                </label>
-              </div>
-
-              <div className="text-sm">
-                <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
-                  Forgot your password?
-                </a>
-              </div>
+            <div>
+              <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-2">
+                Role
+              </label>
+              <select
+                id="role"
+                name="role"
+                value={credentials.role}
+                onChange={handleChange}
+                required
+                className="input-field"
+              >
+                <option value="staff">Staff</option>
+                <option value="manager">Manager</option>
+                <option value="admin">Admin</option>
+              </select>
             </div>
 
             <button
@@ -114,30 +143,21 @@ const LoginPage = () => {
               {isLoading ? (
                 <div className="flex items-center">
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  Signing in...
+                  Creating account...
                 </div>
               ) : (
-                'Sign in'
+                'Create Account'
               )}
             </button>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
-              Don't have an account?{' '}
-              <a href="/signup" className="font-medium text-blue-600 hover:text-blue-500">
-                Create an account
+              Already have an account?{' '}
+              <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
+                Sign in
               </a>
             </p>
-            <button
-              onClick={() => {
-                localStorage.clear();
-                window.location.reload();
-              }}
-              className="mt-2 text-xs text-gray-500 hover:text-gray-700"
-            >
-              Clear stored data (for testing)
-            </button>
           </div>
         </div>
       </div>
@@ -145,4 +165,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage; 
+export default SignupPage; 
