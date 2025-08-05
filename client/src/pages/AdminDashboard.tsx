@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import TaskList from '../components/TaskList';
 import type { User } from '../types';
 
 const AdminDashboard = () => {
@@ -185,7 +186,11 @@ const AdminDashboard = () => {
               </div>
             )}
 
-            {activeTab !== 'dashboard' && (
+            {activeTab === 'tasks' && (
+              <TaskList />
+            )}
+
+            {activeTab !== 'dashboard' && activeTab !== 'tasks' && (
               <div className="text-center py-12">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">
                   {navigationItems.find(item => item.id === activeTab)?.label}

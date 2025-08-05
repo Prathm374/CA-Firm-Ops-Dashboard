@@ -1,8 +1,10 @@
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import LoginPage from './pages/LoginPage';
+import SignupPage from './pages/SignupPage';
 import AdminDashboard from './pages/AdminDashboard';
 import PrivateRoute from './components/PrivateRoute';
 import './App.css';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
 function AppContent() {
   const { isAuthenticated, loading } = useAuth();
@@ -21,15 +23,21 @@ function AppContent() {
   }
 
   return (
-    <div className="App">
-      {!isAuthenticated ? (
-        <LoginPage />
-      ) : (
-        <PrivateRoute>
-          <AdminDashboard />
-        </PrivateRoute>
-      )}
-    </div>
+    <Router>
+      <div className="App">
+        {!isAuthenticated ? (
+          <Routes>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignupPage />} />
+            <Route path="/" element={<Navigate to="/login" replace />} />
+          </Routes>
+        ) : (
+          <PrivateRoute>
+            <AdminDashboard />
+          </PrivateRoute>
+        )}
+      </div>
+    </Router>
   );
 }
 

@@ -27,7 +27,7 @@ A role-based operational dashboard for CA Firms built using the MERN stack with 
    - Default configuration:
      - Server: http://localhost:5000
      - Client: http://localhost:5173
-     - MongoDB: mongodb://localhost:27017/ca-firm-dashboard
+     - MongoDB: DEMO_URI
 
 4. **Seed the database with test users**
    ```bash
@@ -104,7 +104,7 @@ CA-Firm-Ops-Dashboard/
 ```env
 PORT=5000
 NODE_ENV=development
-MONGODB_URI=mongodb://localhost:27017/ca-firm-dashboard
+MONGODB_URI=DEMO_URI
 JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
 CORS_ORIGIN=http://localhost:5173
 ```

@@ -7,13 +7,38 @@ export interface User {
 }
 
 export interface Task {
-  id: string;
+  _id: string;
   title: string;
   description: string;
+  clientId: {
+    _id: string;
+    name: string;
+    company: string;
+  };
+  assignedTo: {
+    _id: string;
+    name: string;
+    email: string;
+  };
+  dueDate: string;
   status: 'pending' | 'in-progress' | 'completed' | 'overdue';
   priority: 'low' | 'medium' | 'high';
-  assignedTo: string;
-  dueDate: string;
+  createdBy: {
+    _id: string;
+    name: string;
+    email: string;
+  };
+  completedAt?: string;
+  tags: string[];
+  attachments: string[];
+  comments: Array<{
+    user: {
+      _id: string;
+      name: string;
+    };
+    content: string;
+    createdAt: string;
+  }>;
   createdAt: string;
   updatedAt: string;
 }

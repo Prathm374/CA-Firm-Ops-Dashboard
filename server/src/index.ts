@@ -3,6 +3,9 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import authRoutes from './routes/auth.route';
+import taskRoutes from './routes/task.route';
+import userRoutes from './routes/user.route';
+import clientRoutes from './routes/client.route';
 import path from 'path';
 
 // Load environment variables
@@ -21,6 +24,11 @@ app.use(express.urlencoded({ extended: true }));
 
 // Database connection
 const MONGODB_URI = process.env.MONGODB_URI;
+
+if (!MONGODB_URI) {
+  console.error('❌ MONGODB_URI is not defined in environment variables');
+  process.exit(1);
+}
 
 mongoose.connect(MONGODB_URI)
   .then(() => {
@@ -43,18 +51,14 @@ app.get('/api/health', (req, res) => {
 // Auth routes
 app.use('/api/auth', authRoutes);
 
-// API Routes (to be implemented)
-app.use('/api/users', (req, res) => {
-  res.json({ message: 'Users route - coming soon' });
-});
+// Task routes
+app.use('/api/tasks', taskRoutes);
 
-app.use('/api/tasks', (req, res) => {
-  res.json({ message: 'Tasks route - coming soon' });
-});
+// User routes
+app.use('/api/users', userRoutes);
 
-app.use('/api/clients', (req, res) => {
-  res.json({ message: 'Clients route - coming soon' });
-});
+// Client routes
+app.use('/api/clients', clientRoutes);
 
 // Error handling middleware
 app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {

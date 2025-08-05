@@ -3,11 +3,12 @@ import mongoose, { Document, Schema } from 'mongoose';
 export interface ITask extends Document {
   title: string;
   description: string;
+  clientId: mongoose.Types.ObjectId;
+  assignedTo: mongoose.Types.ObjectId;
+  dueDate: Date;
   status: 'pending' | 'in-progress' | 'completed' | 'overdue';
   priority: 'low' | 'medium' | 'high';
-  assignedTo: mongoose.Types.ObjectId;
-  assignedBy: mongoose.Types.ObjectId;
-  dueDate: Date;
+  createdBy: mongoose.Types.ObjectId;
   completedAt?: Date;
   tags: string[];
   attachments: string[];
@@ -33,6 +34,20 @@ const taskSchema = new Schema<ITask>({
     trim: true,
     maxlength: [1000, 'Description cannot be more than 1000 characters']
   },
+  clientId: {
+    type: Schema.Types.ObjectId,
+    ref: 'Client',
+    required: [true, 'Client ID is required']
+  },
+  assignedTo: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: [true, 'Task must be assigned to a user']
+  },
+  dueDate: {
+    type: Date,
+    required: [true, 'Due date is required']
+  },
   status: {
     type: String,
     enum: ['pending', 'in-progress', 'completed', 'overdue'],
@@ -45,19 +60,10 @@ const taskSchema = new Schema<ITask>({
     default: 'medium',
     required: true
   },
-  assignedTo: {
+  createdBy: {
     type: Schema.Types.ObjectId,
     ref: 'User',
-    required: [true, 'Task must be assigned to a user']
-  },
-  assignedBy: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-    required: [true, 'Task must have an assigner']
-  },
-  dueDate: {
-    type: Date,
-    required: [true, 'Due date is required']
+    required: [true, 'Task must have a creator']
   },
   completedAt: {
     type: Date,
@@ -93,6 +99,8 @@ const taskSchema = new Schema<ITask>({
 
 // Index for better query performance
 taskSchema.index({ assignedTo: 1, status: 1 });
+taskSchema.index({ clientId: 1 });
+taskSchema.index({ createdBy: 1 });
 taskSchema.index({ dueDate: 1 });
 taskSchema.index({ status: 1, priority: 1 });
 
